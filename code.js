@@ -1,37 +1,44 @@
+// DOM Elements
 const rockbtn = document.querySelector("#rock");
 const paperbtn = document.querySelector("#paper");
 const scissorbtn = document.querySelector("#scissor");
+const resultsContainer = document.querySelector(".results");
+const resultsTable = document.querySelector("#resultsTable tbody");
 
+// Game Variables
 let computerScore = 0;
 let humanScore = 0;
 let rounds = parseInt(prompt("How many rounds do you want to play?"));
 
-// Ensure rounds is a valid number and greater than 0
+// Validate rounds input
 if (isNaN(rounds) || rounds <= 0) {
   alert("Please enter a valid number greater than 0.");
-  rounds = 0; // Set rounds to 0 to prevent any gameplay if invalid input
+  rounds = 0; // Prevent gameplay if invalid input
 }
-// vendor
+
+// Get computer's choice
 function getComputerChoice() {
-  let guess = Math.random();
-  if (guess < 0.33) {
+  const randomValue = Math.random();
+  if (randomValue < 0.33) {
     return "rock";
-  } else if (guess < 0.66) {
+  } else if (randomValue < 0.66) {
     return "paper";
   } else {
     return "scissors";
   }
 }
 
+// Play a round of the game
 function playGame(humanChoice, computerChoice) {
-  const container = document.querySelector(".container");
   // Clear previous results
-  container.innerHTML = "";
+  resultsContainer.innerHTML = "";
 
-  // DOM
+  // Determine the result
   const status = document.createElement("p");
+  let result;
   if (humanChoice === computerChoice) {
     status.textContent = "Tie";
+    result = "Tie";
   } else if (
     (humanChoice === "rock" && computerChoice === "paper") ||
     (humanChoice === "paper" && computerChoice === "scissors") ||
@@ -39,48 +46,58 @@ function playGame(humanChoice, computerChoice) {
   ) {
     status.textContent = `You lose! ${computerChoice} beats ${humanChoice}`;
     computerScore++;
+    result = "Lose";
   } else {
     status.textContent = `You win! ${humanChoice} beats ${computerChoice}`;
     humanScore++;
+    result = "Win";
   }
-  container.appendChild(status);
+  resultsContainer.appendChild(status);
+
+  // Update the table with the current round results
+  const newRow = document.createElement("tr");
+  newRow.innerHTML = `
+    <td>${rounds}</td>
+    <td>${humanChoice}</td>
+    <td>${computerChoice}</td>
+    <td>${result}</td>
+    <td>${humanScore}</td>
+    <td>${computerScore}</td>
+  `;
+  resultsTable.appendChild(newRow);
 }
 
-function displayResults() {
-  const compP = document.createElement("p");
-  const humanP = document.createElement("p");
-  const endGame = document.createElement("p");
-  const result = document.querySelector(".results");
-  result.textContent = "";
-  humanP.textContent = `Your Score: ${humanScore}`;
-  compP.textContent = `Computer Score: ${computerScore}`;
-
-  if (humanScore > computerScore) endGame.textContent = "You Win!";
-  else if (computerScore > humanScore) endGame.textContent = "You Lose!";
-  else endGame.textContent = "Game Ended in a Tie";
-
-  result.appendChild(humanP);
-  result.appendChild(compP);
-  result.appendChild(endGame);
+// Display final results
+function displayResults(humanScore, computerScore) {
+  alert(
+    `Game Over! Final Scores - You: ${humanScore}, Computer: ${computerScore}`
+  );
 }
-// main
+
+// Event Listeners for buttons
 rockbtn.addEventListener("click", () => {
   if (rounds > 0) {
     playGame("rock", getComputerChoice());
     rounds--;
-  } else displayResults(humanScore, computerScore);
+  } else {
+    displayResults(humanScore, computerScore);
+  }
 });
 
 paperbtn.addEventListener("click", () => {
   if (rounds > 0) {
     playGame("paper", getComputerChoice());
     rounds--;
-  } else displayResults(humanScore, computerScore);
+  } else {
+    displayResults(humanScore, computerScore);
+  }
 });
 
 scissorbtn.addEventListener("click", () => {
   if (rounds > 0) {
     playGame("scissors", getComputerChoice());
     rounds--;
-  } else displayResults(humanScore, computerScore);
+  } else {
+    displayResults(humanScore, computerScore);
+  }
 });
